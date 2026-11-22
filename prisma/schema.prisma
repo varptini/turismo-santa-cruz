@@ -1,0 +1,154 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum TipoViaje {
+  CORTO
+  LARGO
+}
+
+enum EstadoViaje {
+  ACTIVO
+  EN_CURSO
+  FINALIZADO
+  CANCELADO
+}
+
+enum TipoParada {
+  TURISTICO
+  BALNEARIO
+  GRUTAS
+  MERCADO
+  HOTEL
+  COMIDA
+  OTRO
+}
+
+enum EstadoReservacion {
+  APARTADO
+  LIQUIDADO
+  CANCELADO
+}
+
+enum EstadoAsiento {
+  DISPONIBLE
+  APARTADO
+  PAGADO
+  BLOQUEADO
+}
+
+enum MetodoPago {
+  EFECTIVO
+  TRANSFERENCIA
+}
+
+model Viaje {
+  id                String        @id @default(cuid())
+  titulo            String
+  tipo              TipoViaje
+  origen            String        @default("Cruz Grande, Gro.")
+  destino           String
+  fechaSalida       DateTime
+  fechaRegreso      DateTime
+  precioBoleto      Float
+  costoRentaCamion  Float
+  totalAsientos     Int
+  inclusiones       String?
+  estado            EstadoViaje   @default(ACTIVO)
+  notas             String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  paradas       Parada[]
+  asientos      Asiento[]
+  reservaciones Reservacion[]
+
+  @@index([fechaSalida])
+  @@index([estado])
+}
+
+model Parada {
+  id            String     @id @default(cuid())
+  viajeId       String
+  orden         Int
+  lugar         String
+  tipo          TipoParada
+  descripcion   String?
+  incluyeCosto  Boolean    @default(false)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  viaje Viaje @relation(fields: [viajeId], references: [id], onDelete: Cascade)
+
+  @@unique([viajeId, orden])
+  @@index([viajeId])
+}
+
+model Reservacion {
+  id              String           @id @default(cuid())
+  viajeId         String
+  nombreTitular   String
+  telefono        String
+  lugarAbordaje   String?
+  totalPagar      Float
+  totalAbonado    Float            @default(0)
+  saldoPendiente  Float
+  estado          EstadoReservacion @default(APARTADO)
+  fechaReserva    DateTime         @default(now())
+  notas           String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  viaje   Viaje   @relation(fields: [viajeId], references: [id], onDelete: Cascade)
+  asientos Asiento[]
+  abonos  Abono[]
+
+  @@index([viajeId])
+  @@index([estado])
+  @@index([telefono])
+}
+
+model Asiento {
+  id              String        @id @default(cuid())
+  viajeId         String
+  numero          Int
+  fila            Int
+  columna         String
+  estado          EstadoAsiento @default(DISPONIBLE)
+  reservacionId   String?
+  nombreOcupante  String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  viaje       Viaje        @relation(fields: [viajeId], references: [id], onDelete: Cascade)
+  reservacion Reservacion? @relation(fields: [reservacionId], references: [id], onDelete: SetNull)
+
+  @@unique([viajeId, numero])
+  @@index([viajeId])
+  @@index([reservacionId])
+  @@index([estado])
+}
+
+model Abono {
+  id              String      @id @default(cuid())
+  reservacionId   String
+  monto           Float
+  fecha           DateTime    @default(now())
+  metodo          MetodoPago
+  comprobanteRef  String?
+  notas           String?
+  createdAt       DateTime    @default(now())
+
+  reservacion Reservacion @relation(fields: [reservacionId], references: [id], onDelete: Cascade)
+
+  @@index([reservacionId])
+  @@index([fecha])
+}
