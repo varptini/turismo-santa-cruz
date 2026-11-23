@@ -52,3 +52,14 @@ Todas las correcciones, mejoras y ajustes técnicos realizados en el proyecto **
 - **Problema:** Las pruebas automatizadas con Playwright fallaban por timeout esperando que el botón flotante de apartado (`#btn-apartar-flotante`) estuviera estable.
 - **Causa Raíz:** El botón utilizaba una animación CSS personalizada continua (`keyframes slide-up`) que causaba fluctuaciones infinitesimales de posición durante la verificación de estabilidad de Playwright.
 - **Solución Implementada:** Se reemplazó la animación personalizada con transiciones estables de opacidad de Tailwind CSS y se asignó un ID determinista (`#btn-apartar-flotante`) para asegurar interactividad instantánea tanto para usuarios reales como en pruebas automatizadas.
+
+---
+
+#### 5. Ausencia de Estilos Visuales (HTML sin CSS) en Dispositivos Móviles
+- **Problema:** Al abrir la aplicación en el navegador del teléfono móvil, la página mostraba texto sin formato (HTML nativo sin estilos, enlaces subrayados azules/morados, botones planos sin diseño y elementos desalineados).
+- **Causa Raíz:** En Next.js con Tailwind CSS v4, `@import "tailwindcss";` requiere el plugin `@tailwindcss/postcss` y el archivo `postcss.config.mjs` para compilar las clases utilitarias. Al no existir dicha configuración, el compilador solo emitía las fuentes web Geist (archivo CSS de ~3.8 KB) y omitía todas las reglas de diseño (colores, flexbox, grid, bordes y paddings).
+- **Solución Implementada:**
+  1. Se instaló la dependencia `@tailwindcss/postcss`.
+  2. Se configuró `postcss.config.mjs` para procesar Tailwind CSS v4.
+  3. Se recompiló la aplicación, produciendo el bundle de estilos completo (~42 KB) con todas las clases de diseño visual (botones esmeralda, tarjetas con bordes redondeados y croquis interactivo).
+  4. Se validó la carga con 12/12 pruebas pasadas en Playwright Desktop y Mobile Chrome.

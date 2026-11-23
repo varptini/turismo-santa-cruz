@@ -6,9 +6,9 @@ test.describe("Flujo Principal de Turismo Santa Cruz", () => {
     await page.goto("/");
     await expect(page).toHaveTitle(/Turismo Santa Cruz/i);
 
-    // 2. Verificar Navbar
+    // 2. Verificar Navbar y encabezado principal
     await expect(page.getByText("Turismo Santa Cruz")).toBeVisible();
-    await expect(page.getByText("Cruz Grande, Gro.")).toBeVisible();
+    await expect(page.getByText(/Gestiona tus viajes/i)).toBeVisible();
 
     // 3. Verificar que los viajes pre-cargados estén visibles
     const tarjetaTolantongo = page.getByRole("heading", { name: /Tolantongo/i });
