@@ -288,7 +288,7 @@ export default function ModalDetalleAsiento({
           </div>
 
           {/* Acciones */}
-          <div className="flex flex-col sm:flex_row gap-3 pt-2 border-t border-zinc-200">
+          <div className="flex flex-col sm:flex-row gap-3 pt-2 border-t border-zinc-200">
             <a
               href={generarMensajeWhatsApp()}
               target="_blank"
