@@ -16,7 +16,8 @@ import { formatWhatsAppPhone } from "@/lib/whatsapp";
 type Tab = "croquis" | "reservas" | "itinerario" | "abordaje";
 
 interface ViajeDetalleClientProps {
-  params: Promise<{ id: string }>;
+  params?: Promise<{ id: string }>;
+  initialViaje?: ViajeDetalle | null;
 }
 
 interface ViajeDetalle {
@@ -71,13 +72,13 @@ interface ViajeDetalle {
   }>;
 }
 
-export default function ViajeDetalleClient({ params }: ViajeDetalleClientProps) {
+export default function ViajeDetalleClient({ initialViaje }: ViajeDetalleClientProps) {
   const router = useRouter();
-  const { id: viajeId } = useParams();
-  const resolvedViajeId = viajeId as string;
+  const params = useParams();
+  const resolvedViajeId = (params?.id as string) || initialViaje?.id;
 
-  const [viaje, setViaje] = useState<ViajeDetalle | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [viaje, setViaje] = useState<ViajeDetalle | null>(initialViaje ?? null);
+  const [loading, setLoading] = useState(initialViaje ? false : true);
   const [activeTab, setActiveTab] = useState<Tab>("croquis");
   const [error, setError] = useState<string | null>(null);
 
@@ -111,8 +112,10 @@ export default function ViajeDetalleClient({ params }: ViajeDetalleClientProps) 
   }, [resolvedViajeId, router]);
 
   useEffect(() => {
-    fetchViaje();
-  }, [fetchViaje]);
+    if (!initialViaje) {
+      fetchViaje();
+    }
+  }, [fetchViaje, initialViaje]);
 
   // Acciones del servidor
   const handleCrearReservacion = async (data: {
