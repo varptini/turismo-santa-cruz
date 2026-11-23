@@ -218,7 +218,6 @@ export default function ViajeDetalleClient({ initialViaje }: ViajeDetalleClientP
   };
 
   const abrirNuevaReserva = () => {
-    if (asientosSeleccionados.length === 0) return;
     setShowNuevaReserva(true);
   };
 
@@ -405,17 +404,6 @@ export default function ViajeDetalleClient({ initialViaje }: ViajeDetalleClientP
                     precioBoleto={viaje.precioBoleto}
                     onApartarSeleccionados={abrirNuevaReserva}
                   />
-                  {asientosSeleccionados.length > 0 && (
-                    <div className="mt-4 flex justify-center">
-                      <button
-                        onClick={abrirNuevaReserva}
-                        className="px-6 py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors touch-manipulation flex items-center gap-2"
-                      >
-                        <Users className="h-5 w-5" />
-                        Apartar {asientosSeleccionados.length} Asiento{asientosSeleccionados.length > 1 ? "s" : ""}
-                      </button>
-                    </div>
-                  )}
                 </div>
               )}
 

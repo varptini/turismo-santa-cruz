@@ -234,7 +234,7 @@ export default function ModoAbordaje({
                             {tieneSaldo && !yaAbordado && (
                               <span className="px-2 py-0.5 text-xs font-medium bg-red-100 text-red-700 rounded-full flex items-center gap-1">
                                 <AlertCircle className="h-3 w-3" aria-hidden="true" />
-                                Saldo: ${asiento.reservacion.saldoPendiente.toFixed(2)}
+                                Saldo: ${(asiento.reservacion.saldoPendiente ?? 0).toFixed(2)}
                               </span>
                             )}
                           </div>
@@ -251,7 +251,7 @@ export default function ModoAbordaje({
                             )}
                             <span className="flex items-center gap-1">
                               <CreditCard className="h-3.5 w-3.5" aria-hidden="true" />
-                              ${asiento.reservacion.totalAbonado.toFixed(2)} / ${asiento.reservacion.totalPagar.toFixed(2)}
+                              ${(asiento.reservacion.totalAbonado ?? 0).toFixed(2)} / ${(asiento.reservacion.totalPagar ?? 0).toFixed(2)}
                             </span>
                           </div>
                         </>

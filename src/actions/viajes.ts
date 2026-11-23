@@ -116,6 +116,8 @@ export async function getViajeById(id: string) {
               id: true,
               nombreTitular: true,
               telefono: true,
+              lugarAbordaje: true,
+              totalPagar: true,
               estado: true,
               totalAbonado: true,
               saldoPendiente: true,

@@ -94,7 +94,15 @@ export default function CroquisAutobus({
   );
 
   const getAsientoEnFila = (fila: number, columnaKey: string) => {
-    return asientosPorFila[fila]?.find((a) => a.columna === columnaKey);
+    return asientosPorFila[fila]?.find((a) => {
+      if (a.columna === columnaKey) return true;
+      // Compatibilidad con letras A, B, C, D o índices 1, 2, 3, 4
+      if (columnaKey === "VENTANA_IZQ" && (a.columna === "A" || a.columna === "1")) return true;
+      if (columnaKey === "PASILLO_IZQ" && (a.columna === "B" || a.columna === "2")) return true;
+      if (columnaKey === "PASILLO_DER" && (a.columna === "C" || a.columna === "3")) return true;
+      if (columnaKey === "VENTANA_DER" && (a.columna === "D" || a.columna === "4")) return true;
+      return false;
+    });
   };
 
   return (
@@ -285,7 +293,7 @@ export default function CroquisAutobus({
 
       {/* Barra de resumen de selección */}
       {totalSeleccionados > 0 && (
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-md px-4 animate-slide-up" role="status" aria-live="polite">
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-md px-4" role="status" aria-live="polite">
           <div className="bg-white rounded-xl shadow-xl border border-zinc-200 p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center" aria-hidden="true">
@@ -297,6 +305,7 @@ export default function CroquisAutobus({
               </div>
             </div>
             <button
+              id="btn-apartar-flotante"
               type="button"
               onClick={() => {
                 if (onApartarSeleccionados) {
@@ -310,19 +319,6 @@ export default function CroquisAutobus({
           </div>
         </div>
       )}
-
-      <style jsx global>{`
-        @keyframes fade-in {
-          from { opacity: 0; transform: translateX(-50%) translateY(4px); }
-          to { opacity: 1; transform: translateX(-50%) translateY(0); }
-        }
-        .animate-fade-in { animation: fade-in 0.15s ease-out forwards; }
-        @keyframes slide-up {
-          from { opacity: 0; transform: translateX(-50%) translateY(16px); }
-          to { opacity: 1; transform: translateX(-50%) translateY(0); }
-        }
-        .animate-slide-up { animation: slide-up 0.3s ease-out forwards; }
-      `}</style>
     </div>
   );
 }
